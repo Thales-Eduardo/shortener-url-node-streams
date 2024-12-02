@@ -1,29 +1,24 @@
-import { readdir, readFile } from "node:fs";
+import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { createConnection } from "./connection";
 
 (async () => {
   const client = await createConnection();
   const fileDatabaseDir = path.join(__dirname, "migrations");
-
   console.log(new Date(), "Start migrations 🔥");
+  try {
+    const files = await readdir(fileDatabaseDir);
 
-  readdir(fileDatabaseDir, (err, files) => {
-    if (err) {
-      console.error(err);
+    for (const file of files) {
+      const content = await readFile(path.join(fileDatabaseDir, file), "utf-8");
+      console.log(`Running migration: ${file}`);
+      await client.query(content);
     }
-
-    files.forEach((file) => {
-      readFile(path.join(fileDatabaseDir, file), async (err, content) => {
-        if (err) {
-          console.error(err);
-        }
-
-        const runMigrationQuery = content.toString();
-
-        await client.query(runMigrationQuery);
-      });
-    });
     console.log(new Date(), "Completed migrations 🆗");
-  });
+  } catch (error) {
+    console.error("Erro ao executar migrações:", error);
+  } finally {
+    await client.end(); // Fecha a conexão com o banco após as migrações
+    console.log("Conexão com o banco encerrada.");
+  }
 })();

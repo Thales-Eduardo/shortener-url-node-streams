@@ -65,3 +65,5 @@ process.on("exit", (code) => {
 // setTimeout(() => {
 //   process.exit(1);
 // }, Math.random() * 1e4); // 10.000
+
+export { app, server };

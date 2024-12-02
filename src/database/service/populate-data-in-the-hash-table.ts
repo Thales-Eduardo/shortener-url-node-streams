@@ -5,7 +5,7 @@ import { RepositoryHash } from "../../repository/implementations/repository-hash
 
 const repositoryHash = new RepositoryHash();
 
-const LIMIT_HASH = 12; //
+const LIMIT_HASH = 25; //
 const HASH_SIZE = 6; //limit 6^64
 
 let count = 0;
