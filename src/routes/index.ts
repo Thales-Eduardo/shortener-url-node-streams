@@ -11,6 +11,8 @@ router.post("/shorten_url", async (req, res) => {
 
   const hash = await repositoryHash.createUserUrl(user_id, original_url);
 
+  if (!hash) res.send("Erro!");
+
   res.status(201).json({ url: `localhost:3333/${hash}` });
 });
 
@@ -32,7 +34,7 @@ router.get("/:hash", async (req, res) => {
 
     res.status(302).redirect(link);
   } else {
-    res.status(404).send();
+    res.status(404).send("Erro!");
   }
 });
 
