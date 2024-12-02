@@ -8,7 +8,7 @@ export const client = new Pool({
   port: 5432,
 });
 
-export const createConection = async () => {
+export const createConnection = async () => {
   await client.connect();
 
   return client;

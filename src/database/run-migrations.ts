@@ -1,9 +1,9 @@
 import { readdir, readFile } from "node:fs";
 import path from "node:path";
-import { createConection } from "./connection";
+import { createConnection } from "./connection";
 
 (async () => {
-  const client = await createConection();
+  const client = await createConnection();
   const fileDatabaseDir = path.join(__dirname, "migrations");
 
   console.log(new Date(), "Start migrations 🔥");

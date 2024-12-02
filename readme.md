@@ -1,6 +1,6 @@
 # nota
 
-- Geramos com antecedência um número X de hash, é controlamos a disponibilidade da hash, evitando um loop grande para saber se a hash já foi usada ou não.
+- Geramos com antecedência um número X de hash, assim controlamos a disponibilidade das hashes, evitando um loop grande para saber se a hash já foi usada ou não.
 - Uma cron vai verificar a quantidade de hash disponíveis, após verificar uma baixa disponibilidade, a cron vai populando a tabela com mais hash.
 - Ir na tabela de hash pegar a primeira hash disponível e salvar na tabela de hash do usuário
 

@@ -12,7 +12,7 @@ export class RepositoryHash {
     try {
       await clients.query("BEGIN");
 
-      // Verificar limite de hashes
+      // Verificar limite de hashes criado
       const result = await clients.query(
         "SELECT COUNT(*) >= $1 AS exceeded FROM hashes",
         [limit_hash]
@@ -58,10 +58,10 @@ export class RepositoryHash {
   ): Promise<string | undefined> {
     const clients = await client.connect();
     try {
-      await clients.query("BEGIN");
+      await client.query("BEGIN");
 
-      // Executa a query
-      const result = await client.query(`
+      // Selecionar e bloquear a hash, atualizando disponível
+      const result = await clients.query(`
         WITH selected_hash AS (
           SELECT hash
           FROM hashes
@@ -76,50 +76,43 @@ export class RepositoryHash {
         RETURNING hash;
       `);
 
-      let hash = "";
-
-      if (result.rows.length > 0) {
-        hash = result.rows[0].hash;
-        await client.query(
-          "INSERT INTO hashuser (hash, user_id, url_original) VALUES ($1, $2, $3)",
-          [hash, user_id, url_original]
-        );
+      if (result.rows.length === 0) {
+        throw new Error("Nenhuma hash disponível.");
       }
+
+      const hash = result.rows[0].hash;
+
+      await clients.query(
+        "INSERT INTO hashuser (hash, user_id, url_original) VALUES ($1, $2, $3)",
+        [hash, user_id, url_original]
+      );
 
       await clients.query("COMMIT");
 
       return hash;
     } catch (err) {
       await clients.query("ROLLBACK");
-      console.error("Erro ao obter hash:", err);
+      console.error("Erro ao criar URL do usuário:", err);
+      throw err;
     } finally {
       clients.release();
     }
   }
 
-  async seandByHash(hash: string): Promise<any> {
+  async seandByHash(
+    hash: string
+  ): Promise<{ url_original: string } | undefined> {
     const clients = await client.connect();
     try {
       const result = await clients.query(
-        "SELECT hash FROM HASHUSER WHERE hash = $1;",
+        "SELECT url_original FROM hashuser WHERE hash = $1;",
         [hash]
       );
 
-      if (result.rows.length > 0) {
-        const row = result.rows[0];
-        return {
-          hash: row.hash,
-          userId: row.user_id,
-          urlOriginal: row.url_original,
-          createdAt: row.created_at,
-          updatedAt: row.updated_at,
-        };
-      }
-
-      return null;
+      return result.rows[0];
     } catch (err) {
       console.error("Erro ao buscar hash com detalhes:", err);
-      return null;
+      return;
     } finally {
       clients.release();
     }

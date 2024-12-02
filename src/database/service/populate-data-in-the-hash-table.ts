@@ -5,7 +5,7 @@ import { RepositoryHash } from "../../repository/implementations/repository-hash
 
 const repositoryHash = new RepositoryHash();
 
-const LIMIT_HASH = 2000; //
+const LIMIT_HASH = 12; //
 const HASH_SIZE = 6; //limit 6^64
 
 let count = 0;
@@ -30,18 +30,23 @@ async function* customReadable(): AsyncGenerator<Buffer> {
     yield Buffer.from(generateRandomHash());
     hash = "";
   }
-
-  count++;
 }
 
 async function* customTransform(stream: any): AsyncGenerator<any> {
   for await (const chunk of stream) {
     try {
-      //salvar no banco de dados a hash gerada
-      await repositoryHash.createHash(chunk.toString(), true, LIMIT_HASH);
+      const res = await repositoryHash.createHash(
+        chunk.toString(),
+        true,
+        LIMIT_HASH
+      );
+
+      console.log(res);
+      if (!res) yield controller.abort();
       yield chunk.toString() + "\n";
-      // yield controller.abort(); //simular erro
+
       count++;
+      // yield controller.abort(); //simular erro
     } catch (error) {
       console.error("[myCustomTransform] Error ao processar chunk:", error);
       continue;
