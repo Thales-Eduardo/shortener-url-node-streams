@@ -17,8 +17,5 @@ import { createConnection } from "./connection";
     console.log(new Date(), "Completed migrations 🆗");
   } catch (error) {
     console.error("Erro ao executar migrações:", error);
-  } finally {
-    await client.end(); // Fecha a conexão com o banco após as migrações
-    console.log("Conexão com o banco encerrada.");
   }
 })();

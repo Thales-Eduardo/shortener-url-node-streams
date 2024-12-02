@@ -1,6 +1,8 @@
 import cors from "cors";
 import express, { ErrorRequestHandler } from "express";
 import "express-async-errors";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "../docs/swagger.json";
 import { router } from "./routes";
 
 import "./database/run-migrations";
@@ -8,6 +10,7 @@ const app = express();
 const port = 3333;
 
 app.use(express.json());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors());
 app.use(router);
 
@@ -31,6 +34,7 @@ app.use(errorHandler);
 
 const server = app.listen(port, () => {
   console.log(`http://localhost:${port} 🔥🔥🚒`);
+  console.log(`http://localhost:${port}/api-docs swagger`);
 });
 
 // ---- Graceful Shutdown

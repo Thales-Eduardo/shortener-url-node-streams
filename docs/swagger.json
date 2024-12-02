@@ -1,0 +1,107 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "URL Shortener API",
+    "description": "API para encurtamento de URLs e redirecionamento",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3333"
+    }
+  ],
+  "paths": {
+    "/shorten_url": {
+      "post": {
+        "summary": "Encurtar uma URL",
+        "description": "Cria um hash para a URL fornecida e retorna o link encurtado.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "description": "ID do usuário"
+                  },
+                  "original_url": {
+                    "type": "string",
+                    "description": "A URL original a ser encurtada"
+                  }
+                },
+                "required": ["user_id", "original_url"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "URL encurtada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "description": "URL encurtada"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro no envio da URL"
+          }
+        }
+      }
+    },
+    "/{hash}": {
+      "get": {
+        "summary": "Redirecionar para a URL original",
+        "description": "Redireciona para a URL original associada ao hash fornecido.",
+        "parameters": [
+          {
+            "name": "hash",
+            "in": "path",
+            "required": true,
+            "description": "O hash da URL encurtada",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirecionamento bem-sucedido",
+            "headers": {
+              "Location": {
+                "description": "URL para a qual o usuário será redirecionado",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Hash não encontrado"
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Verificar a API",
+        "description": "Retorna uma mensagem para verificar se o serviço está funcionando.",
+        "responses": {
+          "200": {
+            "description": "Serviço funcionando"
+          }
+        }
+      }
+    }
+  }
+}
