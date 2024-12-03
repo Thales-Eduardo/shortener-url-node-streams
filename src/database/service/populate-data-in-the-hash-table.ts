@@ -3,9 +3,11 @@ import { randomBytes as uuid } from "node:crypto";
 import { pipeline } from "node:stream/promises";
 import { RepositoryHash } from "../../repository/implementations/repository-hash";
 
+console.time();
+
 const repositoryHash = new RepositoryHash();
 
-const LIMIT_HASH = 25; //
+const LIMIT_HASH = 6000000;
 const HASH_SIZE = 6; //limit 6^64
 
 let count = 0;
@@ -76,3 +78,5 @@ async function* customWritable(stream: any): any {
     console.log("\n[Error] no processo:", error);
   }
 })();
+
+console.timeEnd();
