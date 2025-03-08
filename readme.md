@@ -1,7 +1,7 @@
 # Estratégia de Geração e Uso de Hashes
 
 - Geramos com antecedência um número X de hash, assim controlamos a disponibilidade das hashes, evitando um loop grande para saber se a hash já foi usada ou não.
-- Na tabela de hash pegar a primeira hash disponível retornar o valor e salvar na tabela de hashuser
+- Na tabela de hash iremos pegar a primeira hash disponível, retornar o valor e salvar na tabela de hashuser
 
 # Trafego Estimado
 
